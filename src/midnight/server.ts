@@ -39,14 +39,30 @@ import { WebSocket } from 'ws';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 3001;
 
-const CONFIG = {
-  networkId: 'undeployed',
-  indexer: 'http://127.0.0.1:8088/api/v3/graphql',
-  indexerWS: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
-  node: 'http://127.0.0.1:9944',
-  proofServer: 'http://127.0.0.1:6300',
-  seed: '0000000000000000000000000000000000000000000000000000000000000001',
+const NETWORK = process.env.NIGHTRX_NETWORK || 'local';
+
+const CONFIGS: Record<string, any> = {
+  local: {
+    networkId: 'undeployed',
+    indexer: 'http://127.0.0.1:8088/api/v3/graphql',
+    indexerWS: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
+    node: 'http://127.0.0.1:9944',
+    proofServer: 'http://127.0.0.1:6300',
+    seed: '0000000000000000000000000000000000000000000000000000000000000001',
+  },
+  preprod: {
+    networkId: 'preprod',
+    indexer: 'https://indexer.preprod.midnight.network/api/v3/graphql',
+    indexerWS: 'wss://indexer.preprod.midnight.network/api/v3/graphql/ws',
+    node: 'https://rpc.preprod.midnight.network',
+    proofServer: 'http://127.0.0.1:6300',
+    seed: process.env.MIDNIGHT_SEED || '',
+  },
 };
+
+const CONFIG = CONFIGS[NETWORK];
+if (!CONFIG) { console.error(`Unknown network: ${NETWORK}`); process.exit(1); }
+if (!CONFIG.seed) { console.error('Set MIDNIGHT_SEED env var for preprod'); process.exit(1); }
 
 // --- Wallet/provider setup (same pattern as deploy.ts) ---
 
@@ -253,7 +269,7 @@ async function startServer() {
   });
 
   server.listen(PORT, () => {
-    console.log(`\nNightRx API server running on http://localhost:${PORT}`);
+    console.log(`\nNightRx API server running on http://localhost:${PORT} (${NETWORK})`);
     console.log('Endpoints:');
     console.log('  POST /api/register-issuer    { issuerId }');
     console.log('  POST /api/issue-credential   { issuerId, commitment, issuerSecret }');
