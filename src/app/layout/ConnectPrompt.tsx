@@ -42,8 +42,8 @@ export default function ConnectPrompt({ role }: { role: string }) {
         </svg>
       </motion.div>
 
-      <h2 className="text-2xl font-semibold text-gray-900 mb-3">{msg.title}</h2>
-      <p className="text-gray-500 max-w-md mb-8 leading-relaxed">{msg.description}</p>
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">{msg.title}</h2>
+      <p className="text-gray-500 max-w-md mb-8 leading-relaxed px-4 sm:px-0">{msg.description}</p>
 
       <div className="flex items-center gap-2 text-sm text-gray-400">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

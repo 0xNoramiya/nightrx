@@ -14,12 +14,12 @@ export default function TopBar() {
 
   return (
     <header className="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white shadow-sm">
             Rx
           </div>
-          <span className="text-xl font-semibold tracking-tight text-gray-900">
+          <span className="text-lg sm:text-xl font-semibold tracking-tight text-gray-900">
             Night<span className="text-brand-600">Rx</span>
           </span>
         </div>
@@ -29,7 +29,7 @@ export default function TopBar() {
             <button
               key={value}
               onClick={() => setRole(value)}
-              className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`relative px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                 role === value
                   ? 'text-gray-900'
                   : 'text-gray-500 hover:text-gray-700'
@@ -42,9 +42,9 @@ export default function TopBar() {
                   transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
                 />
               )}
-              <span className="relative flex items-center gap-2">
+              <span className="relative flex items-center gap-1 sm:gap-2">
                 <span>{icon}</span>
-                <span>{label}</span>
+                <span className="hidden sm:inline">{label}</span>
               </span>
             </button>
           ))}

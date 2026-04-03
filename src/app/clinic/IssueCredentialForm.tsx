@@ -81,9 +81,11 @@ export default function IssueCredentialForm() {
         <button onClick={handleIssue} className="btn-primary w-full">Issue Credential</button>
       </div>
       {issuedCredentialQR && (
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4">
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 p-4 sm:p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4 overflow-hidden">
           <p className="text-gray-900 text-sm font-medium">Scan to import credential</p>
-          <QRCode value={issuedCredentialQR} size={200} />
+          <div className="w-full max-w-[200px]">
+            <QRCode value={issuedCredentialQR} size={200} style={{ width: '100%', height: 'auto' }} />
+          </div>
           <button onClick={() => copyToClipboard(issuedCredentialQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy as JSON</button>
         </motion.div>
       )}

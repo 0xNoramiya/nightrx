@@ -29,9 +29,9 @@ export default function ClinicDashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-2xl font-semibold">Clinic Dashboard</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold">Clinic Dashboard</h2>
           <p className="text-gray-500 text-sm mt-1">Issue private medication credentials</p>
         </div>
         {!issuerRegistered ? (

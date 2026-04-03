@@ -74,7 +74,7 @@ export default function ConnectWallet() {
               initial={{ opacity: 0, y: -4, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.95 }}
-              className="absolute right-0 top-full mt-2 w-72 bg-white border border-gray-200 rounded-xl p-4 shadow-card-lg z-50"
+              className="absolute right-0 top-full mt-2 w-64 sm:w-72 bg-white border border-gray-200 rounded-xl p-3 sm:p-4 shadow-card-lg z-50"
             >
               <div className="space-y-3 mb-3">
                 <div className="flex items-center justify-between text-xs">
@@ -129,7 +129,7 @@ export default function ConnectWallet() {
     <button
       onClick={handleConnect}
       disabled={connecting}
-      className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 active:scale-[0.98]"
+      className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-medium px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 active:scale-[0.98]"
     >
       {connecting ? (
         <>

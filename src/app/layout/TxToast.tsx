@@ -40,7 +40,7 @@ export default function TxToast() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col gap-3 max-w-[calc(100vw-2rem)] sm:max-w-sm">
       <AnimatePresence>
         {notifications.map((n) => (
           <motion.div

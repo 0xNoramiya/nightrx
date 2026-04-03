@@ -37,7 +37,7 @@ export default function CredentialCard({ credential, selected, onSelect }: Props
           {active ? 'Active' : expired ? 'Expired' : 'Pending'}
         </div>
       </div>
-      <div className="mt-3 flex gap-4 text-xs text-gray-500">
+      <div className="mt-3 flex flex-wrap gap-2 sm:gap-4 text-xs text-gray-500">
         <span>From: {new Date(credential.validFrom * 1000).toLocaleDateString()}</span>
         <span>Expires: {new Date(credential.expiryDate * 1000).toLocaleDateString()}</span>
       </div>

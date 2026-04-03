@@ -16,7 +16,7 @@ export default function PatientWallet() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold">Patient Wallet</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold">Patient Wallet</h2>
         <p className="text-gray-500 text-sm mt-1">Your credentials are stored privately on this device</p>
       </div>
       <div className="grid gap-6 lg:grid-cols-2">

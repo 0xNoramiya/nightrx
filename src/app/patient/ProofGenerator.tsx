@@ -73,9 +73,11 @@ export default function ProofGenerator({ credential }: Props) {
       <AnimatePresence>
         {proofQR && !generating && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-6">
-            <div className="p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4">
+            <div className="p-4 sm:p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4 overflow-hidden">
               <p className="text-gray-900 text-sm font-medium">Show this to the pharmacy</p>
-              <QRCode value={proofQR} size={200} />
+              <div className="w-full max-w-[200px]">
+                <QRCode value={proofQR} size={200} style={{ width: '100%', height: 'auto' }} />
+              </div>
               <button onClick={() => copyToClipboard(proofQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy proof data</button>
             </div>
             <p className="text-xs text-emerald-600 mt-3 text-center">Proof generated — no diagnosis information included</p>

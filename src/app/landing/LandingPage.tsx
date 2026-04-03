@@ -115,7 +115,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gray-50">
       {/* ─── NAV ─── */}
       <header className="border-b border-gray-200/60 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white shadow-sm">
               Rx
@@ -153,7 +153,7 @@ export default function LandingPage() {
         {/* Subtle gradient orbs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-brand-100/40 via-transparent to-transparent pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(224,231,255,0.5) 0%, transparent 70%)' }} />
 
-        <div className="max-w-6xl mx-auto px-6 pt-24 pb-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-24 pb-12 sm:pb-20">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -172,7 +172,7 @@ export default function LandingPage() {
             <motion.h1
               variants={fadeUp}
               custom={1}
-              className="text-5xl sm:text-6xl font-bold tracking-tight text-gray-900 leading-[1.1] mb-6"
+              className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-[1.1] mb-6"
             >
               Prove medication eligibility{' '}
               <span className="text-brand-600">without revealing your diagnosis</span>
@@ -181,13 +181,13 @@ export default function LandingPage() {
             <motion.p
               variants={fadeUp}
               custom={2}
-              className="text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10"
+              className="text-base sm:text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-10"
             >
               NightRx uses zero-knowledge proofs on Midnight to let patients prove they are eligible for medication
               — without pharmacies ever seeing their diagnosis, condition, or medical records.
             </motion.p>
 
-            <motion.div variants={fadeUp} custom={3} className="flex items-center justify-center gap-4">
+            <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <button
                 onClick={handleConnect}
                 disabled={connecting}
@@ -213,7 +213,7 @@ export default function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={stagger}
-            className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto"
+            className="mt-12 sm:mt-20 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto"
           >
             {[
               { label: 'Clinic', desc: 'Issues credential', icon: <DocumentIcon className="w-6 h-6" />, color: 'brand' },
@@ -246,8 +246,8 @@ export default function LandingPage() {
       </section>
 
       {/* ─── PROBLEM ─── */}
-      <section className="py-24 bg-white border-y border-gray-200/60">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-12 sm:py-24 bg-white border-y border-gray-200/60">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -258,10 +258,10 @@ export default function LandingPage() {
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 text-xs font-medium text-red-500 bg-red-50 border border-red-100 px-4 py-1.5 rounded-full mb-6">
               The Problem
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            <motion.h2 variants={fadeUp} custom={1} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
               Healthcare privacy is broken
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-gray-500 text-lg leading-relaxed mb-12">
+            <motion.p variants={fadeUp} custom={2} className="text-gray-500 text-base sm:text-lg leading-relaxed mb-8 sm:mb-12">
               Today, patients must reveal sensitive diagnoses just to pick up a prescription.
               This leads to stigma, discrimination, and patients avoiding treatment altogether.
             </motion.p>
@@ -304,22 +304,22 @@ export default function LandingPage() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-12 sm:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             variants={stagger}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 text-xs font-medium text-brand-600 bg-brand-50 border border-brand-100 px-4 py-1.5 rounded-full mb-6">
               How It Works
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Privacy through zero-knowledge proofs
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-gray-500 text-lg max-w-2xl mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="text-gray-500 text-base sm:text-lg max-w-2xl mx-auto">
               Three simple steps. No diagnosis ever leaves the patient's device.
             </motion.p>
           </motion.div>
@@ -329,7 +329,7 @@ export default function LandingPage() {
             whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
             variants={stagger}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8"
           >
             {[
               {
@@ -375,22 +375,22 @@ export default function LandingPage() {
       </section>
 
       {/* ─── BUILT ON MIDNIGHT ─── */}
-      <section className="py-24 bg-white border-y border-gray-200/60">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-12 sm:py-24 bg-white border-y border-gray-200/60">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
             variants={stagger}
-            className="text-center mb-16"
+            className="text-center mb-10 sm:mb-16"
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 px-4 py-1.5 rounded-full mb-6">
               Built on Midnight
             </motion.div>
-            <motion.h2 variants={fadeUp} custom={1} className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <motion.h2 variants={fadeUp} custom={1} className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Powered by Midnight's privacy stack
             </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-gray-500 text-lg max-w-2xl mx-auto">
+            <motion.p variants={fadeUp} custom={2} className="text-gray-500 text-base sm:text-lg max-w-2xl mx-auto">
               Midnight provides the confidential smart contract platform that makes NightRx possible.
             </motion.p>
           </motion.div>
@@ -438,9 +438,9 @@ export default function LandingPage() {
             custom={0}
             className="text-center"
           >
-            <div className="inline-flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3">
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-gray-50 border border-gray-200 rounded-xl px-3 sm:px-5 py-3 max-w-full">
               <span className="text-xs text-gray-400 font-medium">Contract</span>
-              <code className="text-xs font-mono text-gray-600">{CONTRACT_ADDRESS.slice(0, 20)}...{CONTRACT_ADDRESS.slice(-12)}</code>
+              <code className="text-xs font-mono text-gray-600 truncate max-w-[200px] sm:max-w-none">{CONTRACT_ADDRESS.slice(0, 20)}...{CONTRACT_ADDRESS.slice(-12)}</code>
               <a
                 href={EXPLORER_URL}
                 target="_blank"
@@ -456,8 +456,8 @@ export default function LandingPage() {
       </section>
 
       {/* ─── TECH STACK ─── */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-10 sm:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -491,14 +491,14 @@ export default function LandingPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-12 sm:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
             variants={stagger}
-            className="relative bg-gradient-to-br from-brand-600 to-brand-800 rounded-3xl p-12 sm:p-16 text-center overflow-hidden"
+            className="relative bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl sm:rounded-3xl p-8 sm:p-12 lg:p-16 text-center overflow-hidden"
           >
             {/* Decorative circles */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
@@ -507,14 +507,14 @@ export default function LandingPage() {
             <motion.h2
               variants={fadeUp}
               custom={0}
-              className="text-3xl sm:text-4xl font-bold text-white mb-4 relative"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 relative"
             >
               Ready to see it in action?
             </motion.h2>
             <motion.p
               variants={fadeUp}
               custom={1}
-              className="text-brand-200 text-lg mb-8 max-w-xl mx-auto relative"
+              className="text-brand-200 text-base sm:text-lg mb-8 max-w-xl mx-auto relative"
             >
               Connect to Midnight's preprod network and try the full credential issuance, proof generation, and verification flow.
             </motion.p>
@@ -534,7 +534,7 @@ export default function LandingPage() {
 
       {/* ─── FOOTER ─── */}
       <footer className="border-t border-gray-200/60 py-8">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-[10px] font-bold text-white">
               Rx

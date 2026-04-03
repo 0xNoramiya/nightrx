@@ -27,7 +27,7 @@ function App() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="fixed top-16 left-0 right-0 z-40 bg-red-50 border-b border-red-100 px-6 py-3 text-sm text-red-600 flex items-center justify-between max-w-6xl mx-auto"
+              className="fixed top-14 sm:top-16 left-0 right-0 z-40 bg-red-50 border-b border-red-100 px-4 sm:px-6 py-3 text-sm text-red-600 flex items-center justify-between max-w-6xl mx-auto"
             >
               <span>{error}</span>
               <button
@@ -55,7 +55,7 @@ function App() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-red-50 border-b border-red-100 px-6 py-3 text-sm text-red-600 flex items-center justify-between max-w-6xl mx-auto"
+            className="bg-red-50 border-b border-red-100 px-4 sm:px-6 py-3 text-sm text-red-600 flex items-center justify-between max-w-6xl mx-auto"
           >
             <span>{error}</span>
             <button
@@ -68,7 +68,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={role}

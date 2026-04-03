@@ -38,7 +38,7 @@ export default function VerificationResult({ result, proof, error, onDispense }:
         </div>
       </motion.div>
 
-      <h3 className={`text-2xl font-bold text-center mb-6 ${isValid ? 'text-emerald-600' : 'text-red-500'}`}>
+      <h3 className={`text-xl sm:text-2xl font-bold text-center mb-6 ${isValid ? 'text-emerald-600' : 'text-red-500'}`}>
         {isValid ? 'VERIFIED' : 'REJECTED'}
       </h3>
 
