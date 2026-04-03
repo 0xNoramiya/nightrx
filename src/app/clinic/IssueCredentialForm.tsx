@@ -7,6 +7,7 @@ import { createCredential } from '../../credential/credential';
 import { computeCommitment } from '../../midnight/contract';
 import { credentialToQR } from '../../credential/qr';
 import { issueCredentialOnChain } from '../../midnight/api';
+import { notifyTx } from '../layout/TxToast';
 
 export default function IssueCredentialForm() {
   const { issuerId, issuerSecret, issuerRegistered, addIssuedCredential, setLoading, setError } = useStore();
@@ -38,7 +39,8 @@ export default function IssueCredentialForm() {
 
       const commitment = computeCommitment(credential);
 
-      await issueCredentialOnChain(issuerId, commitment, issuerSecret!);
+      const txHash = await issueCredentialOnChain(issuerId, commitment, issuerSecret!);
+      notifyTx({ type: 'success', title: 'Credential issued on Midnight', txHash });
 
       addIssuedCredential({
         credential,

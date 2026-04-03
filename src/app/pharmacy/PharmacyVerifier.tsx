@@ -4,6 +4,7 @@ import { useStore } from '../../store/store';
 import type { ProofData } from '../../midnight/types';
 import { parseQR } from '../../credential/qr';
 import { verifyPickupOnChain } from '../../midnight/api';
+import { notifyTx } from '../layout/TxToast';
 import VerificationResult from './VerificationResult';
 import DispensationLog from './DispensationLog';
 
@@ -34,13 +35,14 @@ export default function PharmacyVerifier() {
       setProof(proofData);
 
       // Real on-chain verification via Midnight
-      await verifyPickupOnChain(
+      const txHash = await verifyPickupOnChain(
         proofData.nullifier,
         proofData.medicationTypeHash,
         proofData.credential.patientSecret,
       );
 
       setResult('valid');
+      notifyTx({ type: 'success', title: 'Pickup verified on Midnight', txHash });
     } catch (err) {
       setResult('invalid');
       setError(err instanceof Error ? err.message : 'Verification failed');

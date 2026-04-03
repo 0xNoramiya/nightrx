@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useStore } from '../store/store';
 import TopBar from './layout/TopBar';
 import ConnectPrompt from './layout/ConnectPrompt';
+import TxToast from './layout/TxToast';
 import ClinicDashboard from './clinic/ClinicDashboard';
 import PatientWallet from './patient/PatientWallet';
 import PharmacyVerifier from './pharmacy/PharmacyVerifier';
@@ -18,6 +19,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <TopBar />
+      <TxToast />
 
       <AnimatePresence>
         {error && (

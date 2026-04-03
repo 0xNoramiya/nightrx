@@ -3,6 +3,7 @@ import { useStore } from '../../store/store';
 import { generateRandomSecret } from '../../midnight/wallet';
 import { computeIssuerIdFromSecret } from '../../midnight/contract';
 import { registerIssuerOnChain } from '../../midnight/api';
+import { notifyTx } from '../layout/TxToast';
 import IssueCredentialForm from './IssueCredentialForm';
 import IssuedCredentialsList from './IssuedCredentialsList';
 
@@ -16,8 +17,9 @@ export default function ClinicDashboard() {
       const secret = generateRandomSecret();
       const id = computeIssuerIdFromSecret(secret);
       setIssuerKeys(id, secret);
-      await registerIssuerOnChain(id);
+      const txHash = await registerIssuerOnChain(id);
       setIssuerRegistered(true);
+      notifyTx({ type: 'success', title: 'Issuer registered on Midnight', txHash });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to register issuer');
     } finally {
