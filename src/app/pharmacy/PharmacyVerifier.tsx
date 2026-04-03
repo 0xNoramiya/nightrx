@@ -65,7 +65,7 @@ export default function PharmacyVerifier() {
     <div>
       <div className="mb-8">
         <h2 className="text-2xl font-semibold">Pharmacy Verifier</h2>
-        <p className="text-midnight-400 text-sm mt-1">Verify patient eligibility without seeing their diagnosis</p>
+        <p className="text-gray-500 text-sm mt-1">Verify patient eligibility without seeing their diagnosis</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -86,7 +86,7 @@ export default function PharmacyVerifier() {
             >
               {verifying ? (
                 <span className="flex items-center justify-center gap-2">
-                  <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
+                  <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="inline-block w-4 h-4 border-2 border-brand-200 border-t-brand-600 rounded-full" />
                   Verifying on Midnight...
                 </span>
               ) : 'Verify Proof'}

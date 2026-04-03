@@ -13,34 +13,32 @@ export default function TopBar() {
   const { role, setRole } = useStore();
 
   return (
-    <header className="border-b border-midnight-700/30 bg-midnight-900/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-midnight-400 to-medical-green flex items-center justify-center text-sm font-bold">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-sm font-bold text-white shadow-sm">
             Rx
           </div>
-          <span className="text-lg font-semibold tracking-tight">
-            Night<span className="text-midnight-400">Rx</span>
+          <span className="text-xl font-semibold tracking-tight text-gray-900">
+            Night<span className="text-brand-600">Rx</span>
           </span>
         </div>
 
-        {/* Role Switcher */}
-        <nav className="flex items-center bg-midnight-800/50 rounded-xl p-1 gap-1">
+        <nav className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
           {roles.map(({ value, label, icon }) => (
             <button
               key={value}
               onClick={() => setRole(value)}
               className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 role === value
-                  ? 'text-white'
-                  : 'text-midnight-400 hover:text-midnight-200'
+                  ? 'text-gray-900'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               {role === value && (
                 <motion.div
                   layoutId="activeRole"
-                  className="absolute inset-0 bg-midnight-600/50 rounded-lg"
+                  className="absolute inset-0 bg-white rounded-lg shadow-sm"
                   transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
                 />
               )}
@@ -52,7 +50,6 @@ export default function TopBar() {
           ))}
         </nav>
 
-        {/* Wallet Connection */}
         <ConnectWallet />
       </div>
     </header>

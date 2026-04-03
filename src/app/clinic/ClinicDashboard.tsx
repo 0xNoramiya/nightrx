@@ -30,26 +30,26 @@ export default function ClinicDashboard() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl font-semibold">Clinic Dashboard</h2>
-          <p className="text-midnight-400 text-sm mt-1">Issue private medication credentials</p>
+          <p className="text-gray-500 text-sm mt-1">Issue private medication credentials</p>
         </div>
         {!issuerRegistered ? (
           <button onClick={handleRegisterIssuer} disabled={loading} className="btn-primary">
             {loading ? (
               <span className="flex items-center gap-2">
-                <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
+                <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="inline-block w-4 h-4 border-2 border-brand-200 border-t-brand-600 rounded-full" />
                 Registering...
               </span>
             ) : 'Register as Issuer'}
           </button>
         ) : (
-          <div className="flex items-center gap-2 text-sm text-medical-green">
-            <div className="w-2 h-2 bg-medical-green rounded-full" />
+          <div className="flex items-center gap-2 text-sm text-emerald-600">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full" />
             Registered Issuer
           </div>
         )}
       </div>
       {issuerRegistered && issuerId && (
-        <div className="text-xs text-midnight-500 mb-6 font-mono truncate">
+        <div className="text-xs text-gray-400 mb-6 font-mono truncate">
           Issuer ID: {issuerId.slice(0, 16)}...{issuerId.slice(-8)}
         </div>
       )}

@@ -59,7 +59,7 @@ export default function IssueCredentialForm() {
       <h3 className="text-lg font-semibold mb-4">Issue New Credential</h3>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-midnight-300 mb-1.5">Medication Type</label>
+          <label className="block text-sm text-gray-600 mb-1.5">Medication Type</label>
           <select value={medicationType} onChange={(e) => setMedicationType(e.target.value)} className="input w-full">
             {MEDICATION_TYPES.map((med) => (
               <option key={med.value} value={med.value}>{med.label}</option>
@@ -67,7 +67,7 @@ export default function IssueCredentialForm() {
           </select>
         </div>
         <div>
-          <label className="block text-sm text-midnight-300 mb-1.5">Validity Period</label>
+          <label className="block text-sm text-gray-600 mb-1.5">Validity Period</label>
           <select value={validMonths} onChange={(e) => setValidMonths(Number(e.target.value))} className="input w-full">
             <option value={1}>1 month</option>
             <option value={3}>3 months</option>
@@ -78,10 +78,10 @@ export default function IssueCredentialForm() {
         <button onClick={handleIssue} className="btn-primary w-full">Issue Credential</button>
       </div>
       {issuedCredentialQR && (
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 p-6 bg-white rounded-xl flex flex-col items-center gap-4">
-          <p className="text-midnight-900 text-sm font-medium">Scan to import credential</p>
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4">
+          <p className="text-gray-900 text-sm font-medium">Scan to import credential</p>
           <QRCode value={issuedCredentialQR} size={200} />
-          <button onClick={() => navigator.clipboard.writeText(issuedCredentialQR)} className="text-xs text-midnight-500 hover:text-midnight-700 underline">Copy as JSON</button>
+          <button onClick={() => navigator.clipboard.writeText(issuedCredentialQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy as JSON</button>
         </motion.div>
       )}
     </div>

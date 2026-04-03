@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        midnight: {
+        brand: {
           50: '#eef2ff',
           100: '#e0e7ff',
           200: '#c7d2fe',
@@ -13,20 +13,18 @@ export default {
           500: '#6366f1',
           600: '#4f46e5',
           700: '#4338ca',
-          800: '#1e1b4b',
-          900: '#0f0d2e',
-          950: '#080620',
-        },
-        medical: {
-          green: '#10b981',
-          red: '#ef4444',
-          amber: '#f59e0b',
-          blue: '#3b82f6',
+          800: '#3730a3',
+          900: '#312e81',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+      },
+      boxShadow: {
+        'card': '0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04)',
+        'card-hover': '0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06)',
+        'card-lg': '0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.06)',
       },
     },
   },

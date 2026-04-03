@@ -22,7 +22,7 @@ export default function VerificationResult({ result, proof, error, onDispense }:
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
       className={`card border-2 ${
-        isValid ? 'border-medical-green/50 shadow-lg shadow-medical-green/10' : 'border-medical-red/50 shadow-lg shadow-medical-red/10'
+        isValid ? 'border-emerald-200 shadow-card-lg' : 'border-red-200 shadow-card-lg'
       }`}
     >
       <motion.div
@@ -32,36 +32,36 @@ export default function VerificationResult({ result, proof, error, onDispense }:
         className="flex justify-center mb-6"
       >
         <div className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl ${
-          isValid ? 'bg-medical-green/10 text-medical-green' : 'bg-medical-red/10 text-medical-red'
+          isValid ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
         }`}>
           {isValid ? '✓' : '✗'}
         </div>
       </motion.div>
 
-      <h3 className={`text-2xl font-bold text-center mb-6 ${isValid ? 'text-medical-green' : 'text-medical-red'}`}>
+      <h3 className={`text-2xl font-bold text-center mb-6 ${isValid ? 'text-emerald-600' : 'text-red-500'}`}>
         {isValid ? 'VERIFIED' : 'REJECTED'}
       </h3>
 
       <div className="space-y-3 mb-6">
-        <div className="flex justify-between py-2 border-b border-midnight-700/30">
-          <span className="text-midnight-400 text-sm">Medication</span>
+        <div className="flex justify-between py-2 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Medication</span>
           <span className="text-sm font-medium">{getMedLabel(proof.credential.medicationType)}</span>
         </div>
-        <div className="flex justify-between py-2 border-b border-midnight-700/30">
-          <span className="text-midnight-400 text-sm">Issuer</span>
-          <span className="text-sm font-medium text-medical-green">Registered ✓</span>
+        <div className="flex justify-between py-2 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Issuer</span>
+          <span className="text-sm font-medium text-emerald-600">Registered ✓</span>
         </div>
-        <div className="flex justify-between py-2 border-b border-midnight-700/30">
-          <span className="text-midnight-400 text-sm">Expiry</span>
-          <span className="text-sm font-medium text-medical-green">Valid ✓</span>
+        <div className="flex justify-between py-2 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Expiry</span>
+          <span className="text-sm font-medium text-emerald-600">Valid ✓</span>
         </div>
-        <div className="flex justify-between py-2 border-b border-midnight-700/30">
-          <span className="text-midnight-400 text-sm">Nullifier</span>
-          <span className="text-sm font-medium text-medical-green">Unused ✓</span>
+        <div className="flex justify-between py-2 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Nullifier</span>
+          <span className="text-sm font-medium text-emerald-600">Unused ✓</span>
         </div>
       </div>
 
-      {error && <p className="text-medical-red text-sm mb-4 text-center">{error}</p>}
+      {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
 
       {isValid && (
         <motion.button
@@ -69,13 +69,13 @@ export default function VerificationResult({ result, proof, error, onDispense }:
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           onClick={onDispense}
-          className="w-full py-4 bg-medical-green hover:bg-medical-green/80 text-white font-semibold rounded-xl transition-colors text-lg"
+          className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-colors text-lg"
         >
           Dispense Medication
         </motion.button>
       )}
 
-      <p className="text-xs text-midnight-500 mt-4 text-center">
+      <p className="text-xs text-gray-400 mt-4 text-center">
         No diagnosis or patient identity was revealed during verification
       </p>
     </motion.div>

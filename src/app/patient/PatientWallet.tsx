@@ -17,7 +17,7 @@ export default function PatientWallet() {
     <div>
       <div className="mb-8">
         <h2 className="text-2xl font-semibold">Patient Wallet</h2>
-        <p className="text-midnight-400 text-sm mt-1">Your credentials are stored privately on this device</p>
+        <p className="text-gray-500 text-sm mt-1">Your credentials are stored privately on this device</p>
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
@@ -34,8 +34,8 @@ export default function PatientWallet() {
           )}
           {credentials.length === 0 && (
             <div className="card text-center py-12">
-              <p className="text-midnight-400">No credentials yet</p>
-              <p className="text-midnight-500 text-sm mt-1">Import a credential from your clinic</p>
+              <p className="text-gray-500">No credentials yet</p>
+              <p className="text-gray-400 text-sm mt-1">Import a credential from your clinic</p>
             </div>
           )}
         </div>
@@ -44,8 +44,8 @@ export default function PatientWallet() {
             <ProofGenerator credential={selectedCredential} />
           ) : (
             <div className="card text-center py-12">
-              <p className="text-midnight-400">Select a credential</p>
-              <p className="text-midnight-500 text-sm mt-1">Choose a credential to generate a proof</p>
+              <p className="text-gray-500">Select a credential</p>
+              <p className="text-gray-400 text-sm mt-1">Choose a credential to generate a proof</p>
             </div>
           )}
         </div>

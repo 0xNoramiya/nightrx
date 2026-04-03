@@ -8,20 +8,20 @@ export default function StatusIndicator() {
       <div className="flex items-center gap-1.5">
         <div
           className={`w-2 h-2 rounded-full ${
-            walletConnected ? 'bg-medical-green' : 'bg-midnight-600'
+            walletConnected ? 'bg-emerald-500' : 'bg-gray-300'
           }`}
         />
-        <span className="text-midnight-400">
+        <span className="text-gray-500">
           {walletConnected ? 'Wallet' : 'No Wallet'}
         </span>
       </div>
       <div className="flex items-center gap-1.5">
         <div
           className={`w-2 h-2 rounded-full ${
-            contractDeployed ? 'bg-medical-green' : 'bg-midnight-600'
+            contractDeployed ? 'bg-emerald-500' : 'bg-gray-300'
           }`}
         />
-        <span className="text-midnight-400">
+        <span className="text-gray-500">
           {contractDeployed ? 'Contract' : 'No Contract'}
         </span>
       </div>

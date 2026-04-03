@@ -16,7 +16,7 @@ function App() {
   const { role, walletConnected, error, setError } = useStore();
 
   return (
-    <div className="min-h-screen bg-midnight-950">
+    <div className="min-h-screen bg-gray-50">
       <TopBar />
 
       <AnimatePresence>
@@ -25,12 +25,12 @@ function App() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-medical-red/10 border-b border-medical-red/20 px-6 py-3 text-sm text-medical-red flex items-center justify-between max-w-6xl mx-auto"
+            className="bg-red-50 border-b border-red-100 px-6 py-3 text-sm text-red-600 flex items-center justify-between max-w-6xl mx-auto"
           >
             <span>{error}</span>
             <button
               onClick={() => setError(null)}
-              className="text-medical-red/60 hover:text-medical-red ml-4"
+              className="text-red-400 hover:text-red-600 ml-4"
             >
               Dismiss
             </button>
