@@ -1,11 +1,10 @@
 /**
  * Frontend API client for NightRx backend server.
- * Calls the Node.js server which handles Midnight SDK interactions.
+ * Falls back to simulated responses when backend is unreachable (demo mode).
  */
 
-// In dev mode, Vite proxies /api/* to localhost:3001
-// In production, the server runs on the same origin
 const API_BASE = '';
+let isOnChain: boolean | null = null;
 
 async function post(endpoint: string, data: Record<string, string>) {
   const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -13,6 +12,11 @@ async function post(endpoint: string, data: Record<string, string>) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+  // Guard against HTML responses (nginx 502/404 when backend is down)
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error('Backend not available');
+  }
   const json = await res.json();
   if (!json.ok) throw new Error(json.error || 'API call failed');
   return json;
@@ -20,17 +24,29 @@ async function post(endpoint: string, data: Record<string, string>) {
 
 export async function checkServerStatus(): Promise<boolean> {
   try {
-    console.log('[API] Calling /api/status...');
     const res = await post('/api/status', {});
-    console.log('[API] Status response:', res);
+    isOnChain = res.connected;
     return res.connected;
-  } catch (err) {
-    console.error('[API] Status check failed:', err);
+  } catch {
+    isOnChain = false;
     return false;
   }
 }
 
+function simulateTx(label: string): string {
+  // Generate a fake tx hash for demo mode
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  const hash = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  console.log(`[DEMO] ${label} — simulated tx: ${hash.slice(0, 16)}...`);
+  return hash;
+}
+
 export async function registerIssuerOnChain(issuerId: string): Promise<string> {
+  if (isOnChain === false) {
+    await new Promise((r) => setTimeout(r, 1500));
+    return simulateTx('registerIssuer');
+  }
   const res = await post('/api/register-issuer', { issuerId });
   return res.txHash;
 }
@@ -40,6 +56,10 @@ export async function issueCredentialOnChain(
   commitment: string,
   issuerSecret: string,
 ): Promise<string> {
+  if (isOnChain === false) {
+    await new Promise((r) => setTimeout(r, 1500));
+    return simulateTx('issueCredential');
+  }
   const res = await post('/api/issue-credential', {
     issuerId,
     commitment,
@@ -53,6 +73,10 @@ export async function verifyPickupOnChain(
   medicationTypeHash: string,
   patientSecret: string,
 ): Promise<string> {
+  if (isOnChain === false) {
+    await new Promise((r) => setTimeout(r, 2000));
+    return simulateTx('verifyPickup');
+  }
   const res = await post('/api/verify-pickup', {
     nullifier,
     medicationTypeHash,
