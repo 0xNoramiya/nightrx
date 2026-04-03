@@ -1,0 +1,109 @@
+{
+  "compiler-version": "0.30.0",
+  "language-version": "0.22.0",
+  "runtime-version": "0.15.0",
+  "circuits": [
+    {
+      "name": "registerIssuer",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "issuerId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "issueCredential",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "issuerId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "commitment",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "verifyPickup",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "nullifier",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "medicationTypeHash",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    }
+  ],
+  "witnesses": [
+    {
+      "name": "issuerSecret",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "credentialData",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Tuple",
+        "types": [
+          {
+            "type-name": "Bytes",
+            "length": 32
+          },
+          {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        ]
+      }
+    }
+  ],
+  "contracts": [
+  ]
+}
