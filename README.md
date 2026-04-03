@@ -6,10 +6,11 @@ Privacy-preserving healthcare credential system built on [Midnight](https://midn
 
 ## Deployed Contract (Preprod Testnet)
 
-```
-Contract Address: 05d3e2900cf0a09f73dca91225f1594928d7dbcfcfa22bbcc4990ffcddf98ea5
-Network:          Midnight Preprod
-```
+| | |
+|---|---|
+| **Contract Address** | `05d3e2900cf0a09f73dca91225f1594928d7dbcfcfa22bbcc4990ffcddf98ea5` |
+| **Network** | Midnight Preprod |
+| **Explorer** | [View on Midnight Explorer](https://preprod.midnightexplorer.com/contracts/5741) |
 
 ---
 
