@@ -1,0 +1,82 @@
+pragma language_version >= 0.22;
+
+// ═══════════════════════════════════════════════════════════
+// NightRx — Privacy-Preserving Healthcare Credentials
+// ═══════════════════════════════════════════════════════════
+
+// Public ledger state
+export ledger approvedIssuers: Map<Bytes<32>, Boolean>;
+export ledger credentialCommitments: Set<Bytes<32>>;
+export ledger usedNullifiers: Set<Bytes<32>>;
+export ledger dispensationCount: Counter;
+
+// Witnesses — provide private data from off-chain
+witness issuerSecret(): Bytes<32>;
+witness credentialData(): [Bytes<32>, Bytes<32>, Uint<64>, Uint<64>];
+
+// Register a new approved issuer
+// Called by admin/contract deployer
+export circuit registerIssuer(issuerId: Bytes<32>): [] {
+  approvedIssuers.insert(disclose(issuerId), true);
+}
+
+// Issue a credential — only callable by registered issuers
+// The issuer proves identity by deriving their public ID from their secret key
+// commitment = hash(patientSecret, medicationHash, validFrom, expiry)
+export circuit issueCredential(
+  issuerId: Bytes<32>,
+  commitment: Bytes<32>
+): [] {
+  // Verify issuer is registered
+  assert(
+    approvedIssuers.lookup(disclose(issuerId)) == some<Boolean>(true),
+    "Not a registered issuer"
+  );
+
+  // Issuer proves identity: derives public key from private key
+  const sk = issuerSecret();
+  const computedId = persistentHash<Vector<2, Bytes<32>>>(
+    [pad(32, "nightrx:issuer:"), sk]
+  );
+  assert(computedId == issuerId, "Invalid issuer key");
+
+  // Store credential commitment on-chain
+  credentialCommitments.insert(disclose(commitment));
+}
+
+// Verify a medication pickup
+// Patient proves they hold a valid credential without revealing details
+export circuit verifyPickup(
+  nullifier: Bytes<32>,
+  currentTimestamp: Uint<64>,
+  medicationTypeHash: Bytes<32>
+): [] {
+  // Get private credential data via witness (never exposed on-chain)
+  const [patientSecret, medHash, validFrom, expiry] = credentialData();
+
+  // Verify medication type matches what's being requested
+  assert(medHash == medicationTypeHash, "Medication mismatch");
+
+  // Verify credential is within validity window
+  assert(currentTimestamp >= validFrom, "Credential not yet valid");
+  assert(currentTimestamp <= expiry, "Credential expired");
+
+  // Recompute commitment and verify it exists on-chain (proves issuance)
+  const commitment = persistentHash<Vector<4, Bytes<32>>>(
+    [patientSecret, medHash, pad(32, validFrom), pad(32, expiry)]
+  );
+  assert(credentialCommitments.contains(commitment), "Credential not found");
+
+  // Verify nullifier is correctly derived (binds to patient + medication)
+  const expectedNullifier = persistentHash<Vector<2, Bytes<32>>>(
+    [patientSecret, medHash]
+  );
+  assert(disclose(nullifier) == expectedNullifier, "Invalid nullifier");
+
+  // Ensure credential hasn't already been used
+  assert(!usedNullifiers.contains(disclose(nullifier)), "Already dispensed");
+
+  // Record nullifier as used and increment anonymous counter
+  usedNullifiers.insert(disclose(nullifier));
+  dispensationCount += 1;
+}
