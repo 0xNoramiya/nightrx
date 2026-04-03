@@ -3,7 +3,9 @@
  * Calls the Node.js server which handles Midnight SDK interactions.
  */
 
-const API_BASE = 'http://localhost:3001';
+// In dev mode, Vite proxies /api/* to localhost:3001
+// In production, the server runs on the same origin
+const API_BASE = '';
 
 async function post(endpoint: string, data: Record<string, string>) {
   const res = await fetch(`${API_BASE}${endpoint}`, {
