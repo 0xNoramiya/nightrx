@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useStore } from '../store/store';
 import TopBar from './layout/TopBar';
+import ConnectPrompt from './layout/ConnectPrompt';
 import ClinicDashboard from './clinic/ClinicDashboard';
 import PatientWallet from './patient/PatientWallet';
 import PharmacyVerifier from './pharmacy/PharmacyVerifier';
@@ -12,7 +13,7 @@ const pageVariants = {
 };
 
 function App() {
-  const { role, error, setError } = useStore();
+  const { role, walletConnected, error, setError } = useStore();
 
   return (
     <div className="min-h-screen bg-midnight-950">
@@ -40,16 +41,22 @@ function App() {
       <main className="max-w-6xl mx-auto px-6 py-8">
         <AnimatePresence mode="wait">
           <motion.div
-            key={role}
+            key={walletConnected ? role : 'connect'}
             variants={pageVariants}
             initial="initial"
             animate="animate"
             exit="exit"
             transition={{ duration: 0.2 }}
           >
-            {role === 'clinic' && <ClinicDashboard />}
-            {role === 'patient' && <PatientWallet />}
-            {role === 'pharmacy' && <PharmacyVerifier />}
+            {!walletConnected ? (
+              <ConnectPrompt role={role} />
+            ) : (
+              <>
+                {role === 'clinic' && <ClinicDashboard />}
+                {role === 'patient' && <PatientWallet />}
+                {role === 'pharmacy' && <PharmacyVerifier />}
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
       </main>

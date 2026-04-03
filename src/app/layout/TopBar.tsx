@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import type { Role } from '../../midnight/types';
-import StatusIndicator from './StatusIndicator';
+import ConnectWallet from './ConnectWallet';
 
 const roles: { value: Role; label: string; icon: string }[] = [
   { value: 'clinic', label: 'Clinic', icon: '🏥' },
@@ -15,6 +15,7 @@ export default function TopBar() {
   return (
     <header className="border-b border-midnight-700/30 bg-midnight-900/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-midnight-400 to-medical-green flex items-center justify-center text-sm font-bold">
             Rx
@@ -24,6 +25,7 @@ export default function TopBar() {
           </span>
         </div>
 
+        {/* Role Switcher */}
         <nav className="flex items-center bg-midnight-800/50 rounded-xl p-1 gap-1">
           {roles.map(({ value, label, icon }) => (
             <button
@@ -50,15 +52,8 @@ export default function TopBar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <StatusIndicator />
-          <button
-            onClick={() => useStore.getState().runDemoSetup()}
-            className="text-xs text-midnight-500 hover:text-midnight-300 border border-midnight-700/30 px-3 py-1.5 rounded-lg transition-colors"
-          >
-            Demo Mode
-          </button>
-        </div>
+        {/* Wallet Connection */}
+        <ConnectWallet />
       </div>
     </header>
   );
