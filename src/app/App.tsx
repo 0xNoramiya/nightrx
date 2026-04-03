@@ -1,7 +1,58 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { useStore } from '../store/store';
+import TopBar from './layout/TopBar';
+import ClinicDashboard from './clinic/ClinicDashboard';
+import PatientWallet from './patient/PatientWallet';
+import PharmacyVerifier from './pharmacy/PharmacyVerifier';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -12 },
+};
+
 function App() {
+  const { role, error, setError } = useStore();
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-midnight-300">NightRx</h1>
+    <div className="min-h-screen bg-midnight-950">
+      <TopBar />
+
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-medical-red/10 border-b border-medical-red/20 px-6 py-3 text-sm text-medical-red flex items-center justify-between max-w-6xl mx-auto"
+          >
+            <span>{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="text-medical-red/60 hover:text-medical-red ml-4"
+            >
+              Dismiss
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={role}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.2 }}
+          >
+            {role === 'clinic' && <ClinicDashboard />}
+            {role === 'patient' && <PatientWallet />}
+            {role === 'pharmacy' && <PharmacyVerifier />}
+          </motion.div>
+        </AnimatePresence>
+      </main>
     </div>
   );
 }
