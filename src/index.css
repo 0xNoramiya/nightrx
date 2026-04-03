@@ -5,6 +5,12 @@
 @layer base {
   body {
     @apply bg-midnight-950 text-white;
+    background-image: radial-gradient(
+      ellipse at top,
+      rgba(99, 102, 241, 0.08) 0%,
+      transparent 50%
+    );
+    background-attachment: fixed;
   }
 }
 
