@@ -20,21 +20,26 @@ npm run dev
 
 Open http://localhost:5173 — click **Demo Mode** to pre-populate state.
 
-### With Local Midnight Network
+### With Local Midnight Network (Real On-Chain)
 
 ```bash
-# Start Midnight services (node, indexer, proof server)
+# 1. Start Midnight services (node, indexer, proof server)
 npm run docker:up
 
-# Compile the Compact contract
+# 2. Compile the Compact contract
 npm run compile
 
-# Deploy to local network
+# 3. Deploy contract to local network (~30-60s)
 npm run deploy
 
-# Start the app
+# 4. Start the backend server (bridges frontend to Midnight SDK)
+npm run server
+
+# 5. In another terminal, start the frontend
 npm run dev
 ```
+
+Open http://localhost:5173 — all transactions now execute on-chain with real ZK proofs.
 
 ### With Preprod Testnet
 
