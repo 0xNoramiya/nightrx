@@ -20,7 +20,9 @@ export default function ConnectWallet() {
     setConnecting(true);
     setError(null);
     try {
+      console.log('[ConnectWallet] Checking server status...');
       const serverOnline = await checkServerStatus();
+      console.log('[ConnectWallet] Server online:', serverOnline);
       if (serverOnline) {
         setWalletConnected(true, 'mn_addr_preprod1urcprt...kvlmss3qa6r');
         setContractDeployed('05d3e2900cf0a09f73dca91225f1594928d7dbcfcfa22bbcc4990ffcddf98ea5');

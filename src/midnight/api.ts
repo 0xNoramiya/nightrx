@@ -20,9 +20,12 @@ async function post(endpoint: string, data: Record<string, string>) {
 
 export async function checkServerStatus(): Promise<boolean> {
   try {
+    console.log('[API] Calling /api/status...');
     const res = await post('/api/status', {});
+    console.log('[API] Status response:', res);
     return res.connected;
-  } catch {
+  } catch (err) {
+    console.error('[API] Status check failed:', err);
     return false;
   }
 }
