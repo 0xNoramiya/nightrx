@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
-import { generateRandomSecret, hashString } from '../../midnight/wallet';
+import { generateRandomSecret } from '../../midnight/wallet';
+import { computeIssuerIdFromSecret } from '../../midnight/contract';
 import IssueCredentialForm from './IssueCredentialForm';
 import IssuedCredentialsList from './IssuedCredentialsList';
 
@@ -12,7 +13,7 @@ export default function ClinicDashboard() {
     setError(null);
     try {
       const secret = generateRandomSecret();
-      const id = hashString('nightrx:issuer:' + secret);
+      const id = computeIssuerIdFromSecret(secret);
       setIssuerKeys(id, secret);
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setIssuerRegistered(true);

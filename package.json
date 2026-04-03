@@ -31,6 +31,8 @@
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-qr-code": "^2.0.15",
+    "vite-plugin-top-level-await": "^1.6.0",
+    "vite-plugin-wasm": "^3.6.0",
     "ws": "^8.20.0",
     "zustand": "^4.5.0"
   },
