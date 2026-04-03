@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../../store/store';
 import { generateRandomSecret } from '../../midnight/wallet';
 import { computeIssuerIdFromSecret } from '../../midnight/contract';
+import { registerIssuerOnChain } from '../../midnight/api';
 import IssueCredentialForm from './IssueCredentialForm';
 import IssuedCredentialsList from './IssuedCredentialsList';
 
@@ -15,7 +16,7 @@ export default function ClinicDashboard() {
       const secret = generateRandomSecret();
       const id = computeIssuerIdFromSecret(secret);
       setIssuerKeys(id, secret);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await registerIssuerOnChain(id);
       setIssuerRegistered(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to register issuer');

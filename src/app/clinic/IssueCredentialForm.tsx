@@ -6,9 +6,10 @@ import { MEDICATION_TYPES } from '../../midnight/types';
 import { createCredential } from '../../credential/credential';
 import { computeCommitment } from '../../midnight/contract';
 import { credentialToQR } from '../../credential/qr';
+import { issueCredentialOnChain } from '../../midnight/api';
 
 export default function IssueCredentialForm() {
-  const { issuerId, issuerRegistered, addIssuedCredential, setLoading, setError } = useStore();
+  const { issuerId, issuerSecret, issuerRegistered, addIssuedCredential, setLoading, setError } = useStore();
 
   const [medicationType, setMedicationType] = useState(MEDICATION_TYPES[0].value);
   const [validMonths, setValidMonths] = useState(6);
@@ -37,7 +38,7 @@ export default function IssueCredentialForm() {
 
       const commitment = computeCommitment(credential);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await issueCredentialOnChain(issuerId, commitment, issuerSecret!);
 
       addIssuedCredential({
         credential,

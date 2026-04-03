@@ -11,7 +11,9 @@
     "start-proof-server": "docker run -p 6300:6300 midnightntwrk/proof-server:8.0.3",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "deploy": "tsx src/midnight/deploy.ts"
+    "deploy": "tsx src/midnight/deploy.ts",
+    "server": "tsx src/midnight/server.ts",
+    "test:cli": "tsx src/midnight/cli-test.ts"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-js": "^2.5.0",

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../../store/store';
 import type { ProofData } from '../../midnight/types';
 import { parseQR } from '../../credential/qr';
+import { verifyPickupOnChain } from '../../midnight/api';
 import VerificationResult from './VerificationResult';
 import DispensationLog from './DispensationLog';
 
@@ -32,8 +33,12 @@ export default function PharmacyVerifier() {
 
       setProof(proofData);
 
-      // Simulate on-chain verification
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Real on-chain verification via Midnight
+      await verifyPickupOnChain(
+        proofData.nullifier,
+        proofData.medicationTypeHash,
+        proofData.credential.patientSecret,
+      );
 
       setResult('valid');
     } catch (err) {
