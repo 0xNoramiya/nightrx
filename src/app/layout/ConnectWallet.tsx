@@ -22,13 +22,16 @@ export default function ConnectWallet() {
     try {
       const serverOnline = await checkServerStatus();
       if (serverOnline) {
-        setWalletConnected(true, 'mn_addr_preprod1...connected');
+        setWalletConnected(true, 'mn_addr_preprod1urcprt...kvlmss3qa6r');
         setContractDeployed('05d3e2900cf0a09f73dca91225f1594928d7dbcfcfa22bbcc4990ffcddf98ea5');
       } else {
+        // Backend not reachable — use demo mode with notice
         runDemoSetup();
+        setError('Backend server not reachable — running in demo mode. Start the server for on-chain transactions.');
       }
     } catch {
       runDemoSetup();
+      setError('Backend server not reachable — running in demo mode.');
     } finally {
       setConnecting(false);
     }

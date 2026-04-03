@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { copyToClipboard } from '../../utils/clipboard';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export interface TxNotification {
@@ -99,7 +100,7 @@ export default function TxToast() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigator.clipboard.writeText(n.txHash!);
+                        copyToClipboard(n.txHash!);
                       }}
                       className="text-gray-300 hover:text-gray-500 flex-shrink-0"
                       title="Copy TX hash"

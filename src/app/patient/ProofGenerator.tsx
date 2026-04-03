@@ -6,6 +6,7 @@ import { MEDICATION_TYPES } from '../../midnight/types';
 import { buildProofData } from '../../midnight/contract';
 import { proofToQR } from '../../credential/qr';
 import { useStore } from '../../store/store';
+import { copyToClipboard } from '../../utils/clipboard';
 
 function getMedLabel(value: string): string {
   return MEDICATION_TYPES.find((m) => m.value === value)?.label ?? value;
@@ -75,7 +76,7 @@ export default function ProofGenerator({ credential }: Props) {
             <div className="p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4">
               <p className="text-gray-900 text-sm font-medium">Show this to the pharmacy</p>
               <QRCode value={proofQR} size={200} />
-              <button onClick={() => navigator.clipboard.writeText(proofQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy proof data</button>
+              <button onClick={() => copyToClipboard(proofQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy proof data</button>
             </div>
             <p className="text-xs text-emerald-600 mt-3 text-center">Proof generated — no diagnosis information included</p>
           </motion.div>

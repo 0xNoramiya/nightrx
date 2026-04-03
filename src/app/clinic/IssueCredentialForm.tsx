@@ -7,6 +7,7 @@ import { createCredential } from '../../credential/credential';
 import { computeCommitment } from '../../midnight/contract';
 import { credentialToQR } from '../../credential/qr';
 import { issueCredentialOnChain } from '../../midnight/api';
+import { copyToClipboard } from '../../utils/clipboard';
 import { notifyTx } from '../layout/TxToast';
 
 export default function IssueCredentialForm() {
@@ -83,7 +84,7 @@ export default function IssueCredentialForm() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-6 p-6 bg-white rounded-xl shadow-card-lg border border-gray-100 flex flex-col items-center gap-4">
           <p className="text-gray-900 text-sm font-medium">Scan to import credential</p>
           <QRCode value={issuedCredentialQR} size={200} />
-          <button onClick={() => navigator.clipboard.writeText(issuedCredentialQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy as JSON</button>
+          <button onClick={() => copyToClipboard(issuedCredentialQR)} className="text-xs text-brand-600 hover:text-brand-700 underline">Copy as JSON</button>
         </motion.div>
       )}
     </div>
