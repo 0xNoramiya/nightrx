@@ -175,7 +175,7 @@ async function main() {
     relayURL: new URL(config.node.replace(/^http/, 'ws')),
     txHistoryStorage: new InMemoryTransactionHistoryStorage(),
     costParameters: {
-      additionalFeeOverhead: 300_000_000_000_000n,
+      additionalFeeOverhead: 0n,
       feeBlocksMargin: 5,
     },
   };
@@ -234,10 +234,18 @@ async function main() {
       );
       const finalized = await wallet.finalizeRecipe(recipe);
       await wallet.submitTransaction(finalized);
-      console.log('Waiting for DUST...');
+      console.log('Waiting for DUST (this can take 1-2 minutes on preprod)...');
       await Rx.firstValueFrom(
         wallet.state().pipe(
-          Rx.throttleTime(5000),
+          Rx.throttleTime(10000),
+          Rx.tap((s: any) => {
+            const b = s.dust.balance
+              ? s.dust.balance(new Date())
+              : s.dust.walletBalance
+                ? s.dust.walletBalance(new Date())
+                : 0n;
+            console.log(`  DUST balance: ${b.toLocaleString()}, synced: ${s.isSynced}`);
+          }),
           Rx.filter((s: any) => s.isSynced),
           Rx.filter((s: any) => {
             const b = s.dust.balance
@@ -249,6 +257,8 @@ async function main() {
           }),
         ),
       );
+      console.log('DUST ready. Waiting 10s for stabilization...');
+      await new Promise((r) => setTimeout(r, 10000));
     }
   }
 
