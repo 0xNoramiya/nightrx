@@ -1,121 +1,338 @@
 /**
  * NightRx Contract Deployment Script
  *
- * Deploys the compiled Compact contract to a Midnight network.
- *
  * Usage:
- *   npm run deploy            # Deploy to local dev network
- *   npm run deploy -- preprod  # Deploy to Preprod testnet
- *
- * Prerequisites:
- *   - Compiled contract in contracts/managed/nightrx/
- *   - Proof server running (npm run start-proof-server or docker compose up)
- *   - For preprod: funded wallet (https://faucet.preprod.midnight.network/)
- *
- * When the @midnight-ntwrk SDK packages are installed, this script will:
- * 1. Create or restore a wallet from seed
- * 2. Connect to the Midnight network
- * 3. Register for DUST tokens (gas)
- * 4. Deploy the compiled contract
- * 5. Save deployment info to deployment.json
- *
- * Integration pattern for the compiled contract:
- *
- *   import { deployContract } from '@midnight-ntwrk/midnight-js-contracts';
- *   import { CompiledContract } from '@midnight-ntwrk/compact-runtime';
- *
- *   const NightRx = await import('./contracts/managed/nightrx/contract/index.js');
- *
- *   const compiledContract = CompiledContract.make('nightrx', NightRx.Contract).pipe(
- *     CompiledContract.withWitnesses({
- *       issuerSecret: async (ctx) => issuerSecretKeyBytes,
- *       credentialData: async (ctx) => [patientSecret, medHash, validFrom, expiry],
- *     }),
- *     CompiledContract.withCompiledFileAssets(zkConfigPath),
- *   );
- *
- *   const deployed = await deployContract(providers, {
- *     compiledContract,
- *     privateStateId: 'nightrxState',
- *     initialPrivateState: {},
- *   });
- *
- *   // Call circuits:
- *   await deployed.callCircuit.registerIssuer({ issuerId: bytes32 });
- *   await deployed.callCircuit.issueCredential({ issuerId, commitment });
- *   await deployed.callCircuit.verifyPickup({ nullifier, currentTimestamp, medicationTypeHash });
+ *   npx tsx src/midnight/deploy.ts            # local network
+ *   npx tsx src/midnight/deploy.ts preprod     # preprod testnet
  */
 
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import { CompiledContract } from '@midnight-ntwrk/compact-js';
+import { deployContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { setNetworkId, getNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
+import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
+import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
+import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
+import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
+import {
+  createKeystore,
+  InMemoryTransactionHistoryStorage,
+  PublicKey,
+  UnshieldedWallet,
+} from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+import * as ledger from '@midnight-ntwrk/ledger-v8';
+import * as Rx from 'rxjs';
+import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { getNetworkConfig, type NetworkName } from './config';
+import { Buffer } from 'buffer';
+import { WebSocket } from 'ws';
+
+(globalThis as any).WebSocket = WebSocket;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const zkConfigPath = path.resolve(__dirname, '..', '..', 'contracts', 'managed', 'nightrx');
+
+const CONFIGS = {
+  local: {
+    networkId: 'undeployed',
+    indexer: 'http://127.0.0.1:8088/api/v3/graphql',
+    indexerWS: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
+    node: 'http://127.0.0.1:9944',
+    proofServer: 'http://127.0.0.1:6300',
+    // Genesis master wallet seed (from midnight-local-dev)
+    seed: '0000000000000000000000000000000000000000000000000000000000000001',
+  },
+  preprod: {
+    networkId: 'preprod',
+    indexer: 'https://indexer.preprod.midnight.network/api/v3/graphql',
+    indexerWS: 'wss://indexer.preprod.midnight.network/api/v3/graphql/ws',
+    node: 'https://rpc.preprod.midnight.network',
+    proofServer: 'http://127.0.0.1:6300',
+    seed: process.env.MIDNIGHT_SEED || '',
+  },
+};
+
+type Network = keyof typeof CONFIGS;
+
+function deriveKeys(seed: string) {
+  const hdWallet = HDWallet.fromSeed(Buffer.from(seed, 'hex'));
+  if (hdWallet.type !== 'seedOk') throw new Error('Invalid seed');
+  const result = hdWallet.hdWallet
+    .selectAccount(0)
+    .selectRoles([Roles.Zswap, Roles.NightExternal, Roles.Dust])
+    .deriveKeysAt(0);
+  if (result.type !== 'keysDerived') throw new Error('Key derivation failed');
+  hdWallet.hdWallet.clear();
+  return result.keys;
+}
+
+function signTransactionIntents(
+  tx: any,
+  signFn: (payload: Uint8Array) => any,
+  proofMarker: 'proof' | 'pre-proof',
+) {
+  if (!tx.intents || tx.intents.size === 0) return;
+  for (const segment of tx.intents.keys()) {
+    const intent = tx.intents.get(segment);
+    if (!intent) continue;
+    const cloned = ledger.Intent.deserialize(
+      'signature',
+      proofMarker,
+      'pre-binding',
+      intent.serialize(),
+    );
+    const sigData = cloned.signatureData(segment);
+    const signature = signFn(sigData);
+    if (cloned.fallibleUnshieldedOffer) {
+      const sigs = cloned.fallibleUnshieldedOffer.inputs.map(
+        (_: any, i: number) =>
+          cloned.fallibleUnshieldedOffer!.signatures.at(i) ?? signature,
+      );
+      cloned.fallibleUnshieldedOffer =
+        cloned.fallibleUnshieldedOffer.addSignatures(sigs);
+    }
+    if (cloned.guaranteedUnshieldedOffer) {
+      const sigs = cloned.guaranteedUnshieldedOffer.inputs.map(
+        (_: any, i: number) =>
+          cloned.guaranteedUnshieldedOffer!.signatures.at(i) ?? signature,
+      );
+      cloned.guaranteedUnshieldedOffer =
+        cloned.guaranteedUnshieldedOffer.addSignatures(sigs);
+    }
+    tx.intents.set(segment, cloned);
+  }
+}
 
 async function main() {
-  const network: NetworkName = (process.argv[2] as NetworkName) || 'local';
-  const config = getNetworkConfig(network);
-
-  console.log(`\n╔══════════════════════════════════════════════╗`);
-  console.log(`║     NightRx — Deploy to ${network.padEnd(8)}              ║`);
-  console.log(`╚══════════════════════════════════════════════╝\n`);
-
-  console.log(`Network:      ${network}`);
-  console.log(`Node:         ${config.node}`);
-  console.log(`Indexer:      ${config.indexer}`);
-  console.log(`Proof Server: ${config.proofServer}\n`);
-
-  // Check compiled contract exists
-  const contractPath = path.join(zkConfigPath, 'contract', 'index.js');
-  if (!fs.existsSync(contractPath)) {
-    console.error('❌ Contract not compiled!');
-    console.error('   Run: npm run compile');
-    console.error(`   Expected: ${contractPath}\n`);
+  const network: Network = (process.argv[2] as Network) || 'local';
+  const config = CONFIGS[network];
+  if (!config) {
+    console.error(`Unknown network: ${network}`);
+    process.exit(1);
+  }
+  if (!config.seed) {
+    console.error('Set MIDNIGHT_SEED env var for preprod deployment');
     process.exit(1);
   }
 
-  console.log('✅ Compiled contract found\n');
+  console.log(`\n=== NightRx Deploy (${network}) ===\n`);
 
-  // When @midnight-ntwrk packages are available, the full deployment flow goes here:
-  // 1. Generate or restore wallet seed
-  // 2. Derive keys (HD wallet)
-  // 3. Create wallet (shielded + unshielded + dust)
-  // 4. Fund wallet if needed
-  // 5. Register for DUST
-  // 6. Deploy contract
-  // 7. Save deployment.json
+  setNetworkId(config.networkId);
 
-  console.log('⚠️  Full deployment requires @midnight-ntwrk SDK packages.');
-  console.log('   Install them with access to the Midnight npm registry:\n');
-  console.log('   npm config set @midnight-ntwrk:registry https://npm.midnight.network/');
-  console.log('   npm install @midnight-ntwrk/midnight-js-contracts @midnight-ntwrk/wallet-sdk-hd ...\n');
+  // Load compiled contract
+  const zkConfigPath = path.resolve(__dirname, '..', '..', 'contracts', 'managed', 'nightrx');
+  const contractPath = path.resolve(zkConfigPath, 'contract', 'index.js');
+  if (!fs.existsSync(contractPath)) {
+    console.error('Contract not compiled! Run: npm run compile');
+    process.exit(1);
+  }
 
-  console.log('   For local development: npm run docker:up\n');
-  console.log('   For preprod testnet:');
-  console.log('   - Fund wallet: https://faucet.preprod.midnight.network/');
-  console.log('   - Set MIDNIGHT_SEED env var with your wallet seed\n');
+  const contractModule = await import(contractPath);
 
-  // Save placeholder deployment info
-  const deploymentInfo = {
-    network,
-    contractAddress: null,
-    note: 'Deployment requires @midnight-ntwrk SDK packages',
-    config: {
-      node: config.node,
-      indexer: config.indexer,
-      proofServer: config.proofServer,
+  // Witness implementations for deployment
+  // These provide private data to the ZK circuits
+  const witnesses = {
+    issuerSecret: (context: any): [any, Uint8Array] => {
+      // Return current private state + a dummy 32-byte secret
+      // Real issuer secret will be provided when calling issueCredential
+      return [context.privateState, new Uint8Array(32)];
     },
-    createdAt: new Date().toISOString(),
+    credentialData: (context: any): [any, [Uint8Array, Uint8Array]] => {
+      // Return current private state + dummy credential data
+      // Real credential data will be provided when calling verifyPickup
+      return [context.privateState, [new Uint8Array(32), new Uint8Array(32)]];
+    },
   };
 
-  const deploymentPath = path.resolve(__dirname, '..', '..', 'deployment.json');
-  fs.writeFileSync(deploymentPath, JSON.stringify(deploymentInfo, null, 2));
-  console.log(`📄 Deployment config saved to deployment.json\n`);
+  const compiledContract = (CompiledContract as any)
+    .make('nightrx', contractModule.Contract)
+    .pipe(
+      (c: any) => (CompiledContract as any).withWitnesses(witnesses)(c),
+      (CompiledContract as any).withCompiledFileAssets(zkConfigPath),
+    );
+  console.log('Contract loaded.');
+
+  // Derive keys from seed
+  const keys = deriveKeys(config.seed);
+  const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(keys[Roles.Zswap]);
+  const dustSecretKey = ledger.DustSecretKey.fromSeed(keys[Roles.Dust]);
+  const unshieldedKeystore = createKeystore(
+    keys[Roles.NightExternal],
+    getNetworkId(),
+  );
+
+  // Build wallet
+  const walletConfig = {
+    networkId: getNetworkId(),
+    indexerClientConnection: {
+      indexerHttpUrl: config.indexer,
+      indexerWsUrl: config.indexerWS,
+    },
+    provingServerUrl: new URL(config.proofServer),
+    relayURL: new URL(config.node.replace(/^http/, 'ws')),
+    txHistoryStorage: new InMemoryTransactionHistoryStorage(),
+    costParameters: {
+      additionalFeeOverhead: 300_000_000_000_000n,
+      feeBlocksMargin: 5,
+    },
+  };
+
+  console.log('Initializing wallet...');
+  const wallet = await WalletFacade.init({
+    configuration: walletConfig,
+    shielded: (cfg: any) =>
+      ShieldedWallet(cfg).startWithSecretKeys(shieldedSecretKeys),
+    unshielded: (cfg: any) =>
+      UnshieldedWallet(cfg).startWithPublicKey(
+        PublicKey.fromKeyStore(unshieldedKeystore),
+      ),
+    dust: (cfg: any) =>
+      DustWallet(cfg).startWithSecretKey(
+        dustSecretKey,
+        ledger.LedgerParameters.initialParameters().dust,
+      ),
+  });
+  await wallet.start(shieldedSecretKeys, dustSecretKey);
+  console.log('Wallet started. Syncing...');
+
+  // Wait for sync
+  await Rx.firstValueFrom(
+    wallet
+      .state()
+      .pipe(Rx.throttleTime(5000), Rx.filter((s: any) => s.isSynced)),
+  );
+
+  let state: any = await Rx.firstValueFrom(
+    wallet.state().pipe(Rx.filter((s: any) => s.isSynced)),
+  );
+
+  const nightBalance =
+    state.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
+  console.log(`NIGHT balance: ${nightBalance.toLocaleString()}`);
+
+  // Register for DUST if needed
+  const dustBalance = state.dust.balance
+    ? state.dust.balance(new Date())
+    : state.dust.walletBalance
+      ? state.dust.walletBalance(new Date())
+      : 0n;
+  console.log(`DUST balance: ${dustBalance.toLocaleString()}`);
+
+  if (dustBalance === 0n) {
+    const nightUtxos = state.unshielded.availableCoins.filter(
+      (c: any) => c.meta?.registeredForDustGeneration !== true,
+    );
+    if (nightUtxos.length > 0) {
+      console.log('Registering for DUST...');
+      const recipe = await wallet.registerNightUtxosForDustGeneration(
+        nightUtxos,
+        unshieldedKeystore.getPublicKey(),
+        (p: Uint8Array) => unshieldedKeystore.signData(p),
+      );
+      const finalized = await wallet.finalizeRecipe(recipe);
+      await wallet.submitTransaction(finalized);
+      console.log('Waiting for DUST...');
+      await Rx.firstValueFrom(
+        wallet.state().pipe(
+          Rx.throttleTime(5000),
+          Rx.filter((s: any) => s.isSynced),
+          Rx.filter((s: any) => {
+            const b = s.dust.balance
+              ? s.dust.balance(new Date())
+              : s.dust.walletBalance
+                ? s.dust.walletBalance(new Date())
+                : 0n;
+            return b > 0n;
+          }),
+        ),
+      );
+    }
+  }
+
+  // Build providers
+  const syncedState: any = await Rx.firstValueFrom(
+    wallet.state().pipe(Rx.filter((s: any) => s.isSynced)),
+  );
+
+  const walletProvider = {
+    getCoinPublicKey: () =>
+      syncedState.shielded.coinPublicKey.toHexString(),
+    getEncryptionPublicKey: () =>
+      syncedState.shielded.encryptionPublicKey.toHexString(),
+    async balanceTx(tx: any, ttl?: Date) {
+      const recipe = await wallet.balanceUnboundTransaction(
+        tx,
+        {
+          shieldedSecretKeys,
+          dustSecretKey,
+        },
+        { ttl: ttl ?? new Date(Date.now() + 30 * 60 * 1000) },
+      );
+      const signFn = (payload: Uint8Array) =>
+        unshieldedKeystore.signData(payload);
+      signTransactionIntents(recipe.baseTransaction, signFn, 'proof');
+      if (recipe.balancingTransaction) {
+        signTransactionIntents(
+          recipe.balancingTransaction,
+          signFn,
+          'pre-proof',
+        );
+      }
+      return wallet.finalizeRecipe(recipe);
+    },
+    submitTx: (tx: any) => wallet.submitTransaction(tx),
+  };
+
+  const accountId = walletProvider.getCoinPublicKey();
+  const storagePassword = `${Buffer.from(accountId, 'hex').toString('base64')}!`;
+  const zkConfigProvider = new NodeZkConfigProvider(zkConfigPath);
+
+  const providers = {
+    privateStateProvider: levelPrivateStateProvider({
+      privateStateStoreName: 'nightrx-private-state',
+      accountId,
+      privateStoragePasswordProvider: () => storagePassword,
+    }),
+    publicDataProvider: indexerPublicDataProvider(config.indexer, config.indexerWS),
+    zkConfigProvider,
+    proofProvider: httpClientProofProvider(config.proofServer, zkConfigProvider),
+    walletProvider,
+    midnightProvider: walletProvider,
+  };
+
+  console.log('Deploying contract (this takes 30-60 seconds)...');
+  const deployed = await deployContract(providers, {
+    compiledContract,
+    privateStateId: 'nightrxState',
+    initialPrivateState: {},
+    args: [],
+  });
+
+  const contractAddress = deployed.deployTxData.public.contractAddress;
+  console.log(`\n=== CONTRACT DEPLOYED ===`);
+  console.log(`Address: ${contractAddress}`);
+  console.log(`Network: ${network}`);
+
+  const deploymentInfo = {
+    contractAddress,
+    network,
+    seed: config.seed,
+    deployedAt: new Date().toISOString(),
+  };
+
+  const deployPath = path.resolve(__dirname, '..', '..', 'deployment.json');
+  fs.writeFileSync(deployPath, JSON.stringify(deploymentInfo, null, 2));
+  console.log(`Saved to deployment.json\n`);
+
+  await wallet.stop();
+  process.exit(0);
 }
 
 main().catch((err) => {
-  console.error('Deployment failed:', err);
+  console.error('DEPLOY FAILED:', err.message || err);
+  if (err.stack) console.error(err.stack);
   process.exit(1);
 });
