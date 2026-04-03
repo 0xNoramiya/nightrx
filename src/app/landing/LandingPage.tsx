@@ -88,7 +88,7 @@ function ZapIcon({ className = 'w-5 h-5' }: { className?: string }) {
 
 /* ─── Landing Page ─── */
 export default function LandingPage() {
-  const { setWalletConnected, setContractDeployed, setError, runDemoSetup } = useStore();
+  const { setWalletConnected, setContractDeployed, setIsOnChain, setError, runDemoSetup } = useStore();
   const [connecting, setConnecting] = useState(false);
 
   const handleConnect = async () => {
@@ -99,12 +99,15 @@ export default function LandingPage() {
       if (serverOnline) {
         setWalletConnected(true, 'preprod');
         setContractDeployed(CONTRACT_ADDRESS);
+        setIsOnChain(true);
       } else {
         runDemoSetup();
+        setIsOnChain(false);
         setError('Backend not reachable — running in demo mode.');
       }
     } catch {
       runDemoSetup();
+      setIsOnChain(false);
       setError('Backend not reachable — running in demo mode.');
     } finally {
       setConnecting(false);

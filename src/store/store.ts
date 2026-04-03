@@ -25,7 +25,9 @@ interface NightRxState {
   // Wallet
   walletConnected: boolean;
   walletAddress: string | null;
+  isOnChain: boolean;
   setWalletConnected: (connected: boolean, address?: string) => void;
+  setIsOnChain: (value: boolean) => void;
 
   // Contract
   contractDeployed: boolean;
@@ -74,8 +76,10 @@ export const useStore = create<NightRxState>((set) => ({
   // Wallet
   walletConnected: false,
   walletAddress: null,
+  isOnChain: false,
   setWalletConnected: (connected, address) =>
     set({ walletConnected: connected, walletAddress: address ?? null }),
+  setIsOnChain: (value) => set({ isOnChain: value }),
 
   // Contract
   contractDeployed: false,

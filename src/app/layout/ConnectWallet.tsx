@@ -11,14 +11,15 @@ export default function ConnectWallet() {
     walletConnected,
     contractDeployed,
     contractAddress,
+    isOnChain,
     setWalletConnected,
     setContractDeployed,
+    setIsOnChain,
     setError,
     runDemoSetup,
   } = useStore();
   const [connecting, setConnecting] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isOnChain, setIsOnChain] = useState(false);
 
   const handleConnect = async () => {
     setConnecting(true);
@@ -45,8 +46,8 @@ export default function ConnectWallet() {
 
   const handleDisconnect = () => {
     setWalletConnected(false);
-    setShowDropdown(false);
     setIsOnChain(false);
+    setShowDropdown(false);
   };
 
   if (walletConnected) {
