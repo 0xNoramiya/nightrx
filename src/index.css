@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-midnight-950 text-white;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-midnight-900/50 border border-midnight-700/30 rounded-2xl p-6 backdrop-blur-sm;
+  }
+  .btn-primary {
+    @apply bg-midnight-500 hover:bg-midnight-400 text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-midnight-500/25;
+  }
+  .btn-secondary {
+    @apply bg-midnight-800/50 hover:bg-midnight-700/50 text-midnight-200 border border-midnight-600/30 font-medium px-6 py-3 rounded-xl transition-all duration-200;
+  }
+  .input {
+    @apply bg-midnight-900/80 border border-midnight-600/30 rounded-xl px-4 py-3 text-white placeholder-midnight-400 focus:outline-none focus:ring-2 focus:ring-midnight-500/50 focus:border-midnight-500/50 transition-all;
+  }
+}
