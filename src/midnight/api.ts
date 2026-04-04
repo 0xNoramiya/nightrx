@@ -1,8 +1,3 @@
-/**
- * Frontend API client for NightRx backend server.
- * Falls back to simulated responses when backend is unreachable (demo mode).
- */
-
 const API_BASE = '';
 let isOnChain: boolean | null = null;
 
@@ -34,7 +29,6 @@ export async function checkServerStatus(): Promise<boolean> {
 }
 
 function simulateTx(label: string): string {
-  // Generate a fake tx hash for demo mode
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
   const hash = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');

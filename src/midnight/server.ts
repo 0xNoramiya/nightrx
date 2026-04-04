@@ -1,13 +1,3 @@
-/**
- * NightRx Backend Server
- *
- * Thin HTTP server that bridges the React frontend to the Midnight SDK.
- * The SDK requires Node.js APIs (LevelDB, WebSocket, fs) that don't work
- * in the browser, so this server handles wallet management and circuit calls.
- *
- * Usage: npx tsx src/midnight/server.ts
- */
-
 import http from 'node:http';
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
 import { findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
@@ -64,8 +54,6 @@ const CONFIG = CONFIGS[NETWORK];
 if (!CONFIG) { console.error(`Unknown network: ${NETWORK}`); process.exit(1); }
 if (!CONFIG.seed) { console.error('Set MIDNIGHT_SEED env var for preprod'); process.exit(1); }
 
-// --- Wallet/provider setup (same pattern as deploy.ts) ---
-
 function deriveKeys(seed: string) {
   const hdWallet = HDWallet.fromSeed(Buffer.from(seed, 'hex'));
   if (hdWallet.type !== 'seedOk') throw new Error('Invalid seed');
@@ -98,7 +86,6 @@ function signTransactionIntents(tx: any, signFn: (p: Uint8Array) => any, proofMa
   }
 }
 
-// --- Mutable witness state (updated before each circuit call) ---
 let currentIssuerSecret = new Uint8Array(32);
 let currentPatientSecret = new Uint8Array(32);
 let currentMedHash = new Uint8Array(32);
@@ -214,7 +201,6 @@ async function startServer() {
   const contract = await init();
 
   const server = http.createServer(async (req, res) => {
-    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

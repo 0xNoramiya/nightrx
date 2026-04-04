@@ -16,7 +16,6 @@ const pageVariants = {
 function App() {
   const { role, walletConnected, error, setError } = useStore();
 
-  // Show landing page when wallet is not connected
   if (!walletConnected) {
     return (
       <>

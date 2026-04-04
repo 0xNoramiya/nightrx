@@ -1,9 +1,3 @@
-/**
- * NightRx CLI Test — calls real circuits on deployed contract
- *
- * Usage: npx tsx src/midnight/cli-test.ts
- */
-
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
 import {
   deployContract,
@@ -46,7 +40,6 @@ const CONFIG = {
   seed: '0000000000000000000000000000000000000000000000000000000000000001',
 };
 
-// Hash helpers — same as in contract.ts
 const bytes32Descriptor = new compactRuntime.CompactTypeBytes(32);
 const vector2Descriptor = new compactRuntime.CompactTypeVector(2, bytes32Descriptor);
 const vector3Descriptor = new compactRuntime.CompactTypeVector(3, bytes32Descriptor);
@@ -75,8 +68,6 @@ function randomBytes32(): Uint8Array {
   for (let i = 0; i < 32; i++) bytes[i] = Math.floor(Math.random() * 256);
   return bytes;
 }
-
-// --- Key derivation and wallet setup (same as deploy.ts) ---
 
 function deriveKeys(seed: string) {
   const hdWallet = HDWallet.fromSeed(Buffer.from(seed, 'hex'));
@@ -111,7 +102,6 @@ function signTransactionIntents(tx: any, signFn: (p: Uint8Array) => any, proofMa
 }
 
 async function main() {
-  // Read deployment info
   const deployPath = path.resolve(__dirname, '..', '..', 'deployment.json');
   if (!fs.existsSync(deployPath)) {
     console.error('No deployment.json found. Run deploy first: npm run deploy');
@@ -123,7 +113,6 @@ async function main() {
 
   setNetworkId(CONFIG.networkId);
 
-  // Prepare test data
   const issuerSecretBytes = randomBytes32();
   const issuerPrefix = stringToBytes32('nightrx:issuer:');
   const issuerId = compactRuntime.persistentHash(vector2Descriptor, [issuerPrefix, issuerSecretBytes]);
@@ -138,11 +127,9 @@ async function main() {
   console.log(`Commitment: ${bytesToHex(commitment)}`);
   console.log(`Nullifier:  ${bytesToHex(nullifier)}\n`);
 
-  // Load contract with witnesses
   const zkConfigPath = path.resolve(__dirname, '..', '..', 'contracts', 'managed', 'nightrx');
   const contractModule = await import(path.resolve(zkConfigPath, 'contract', 'index.js'));
 
-  // Mutable witness state — updated before each circuit call
   let currentIssuerSecret = issuerSecretBytes;
   let currentPatientSecret = patientSecret;
   let currentMedHash = medicationHash;
@@ -163,7 +150,6 @@ async function main() {
       (CompiledContract as any).withCompiledFileAssets(zkConfigPath),
     );
 
-  // Setup wallet
   const keys = deriveKeys(CONFIG.seed);
   const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(keys[Roles.Zswap]);
   const dustSecretKey = ledger.DustSecretKey.fromSeed(keys[Roles.Dust]);
@@ -222,7 +208,6 @@ async function main() {
     midnightProvider: walletProvider,
   };
 
-  // Find deployed contract
   console.log('Connecting to deployed contract...');
   const contract = await findDeployedContract(providers, {
     compiledContract,
@@ -232,21 +217,18 @@ async function main() {
   });
   console.log('Connected!\n');
 
-  // Step 1: Register issuer
   console.log('--- Step 1: Register Issuer ---');
   console.log(`Calling registerIssuer(${bytesToHex(issuerId).slice(0, 16)}...)...`);
   const regResult = await contract.callTx.registerIssuer(issuerId);
   console.log(`TX submitted. Block: ${regResult?.public?.txHash ?? 'pending'}`);
   console.log('Issuer registered!\n');
 
-  // Step 2: Issue credential
   console.log('--- Step 2: Issue Credential ---');
   console.log(`Calling issueCredential(${bytesToHex(issuerId).slice(0, 16)}..., ${bytesToHex(commitment).slice(0, 16)}...)...`);
   const issueResult = await contract.callTx.issueCredential(issuerId, commitment);
   console.log(`TX submitted. Block: ${issueResult?.public?.txHash ?? 'pending'}`);
   console.log('Credential issued!\n');
 
-  // Step 3: Verify pickup
   console.log('--- Step 3: Verify Pickup ---');
   console.log(`Calling verifyPickup(${bytesToHex(nullifier).slice(0, 16)}..., ${bytesToHex(medicationHash).slice(0, 16)}...)...`);
   const verifyResult = await contract.callTx.verifyPickup(nullifier, medicationHash);

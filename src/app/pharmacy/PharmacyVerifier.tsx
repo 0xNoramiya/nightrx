@@ -34,7 +34,6 @@ export default function PharmacyVerifier() {
 
       setProof(proofData);
 
-      // Real on-chain verification via Midnight
       const txHash = await verifyPickupOnChain(
         proofData.nullifier,
         proofData.medicationTypeHash,

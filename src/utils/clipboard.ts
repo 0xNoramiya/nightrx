@@ -1,10 +1,9 @@
-/** Clipboard fallback for HTTP (non-HTTPS) contexts */
 export function copyToClipboard(text: string): void {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(text);
     return;
   }
-  // Fallback: create a temporary textarea
+  // Fallback for HTTP (non-HTTPS) contexts where navigator.clipboard is unavailable
   const textarea = document.createElement('textarea');
   textarea.value = text;
   textarea.style.position = 'fixed';

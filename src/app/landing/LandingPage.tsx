@@ -6,7 +6,6 @@ import { checkServerStatus } from '../../midnight/api';
 const CONTRACT_ADDRESS = '05d3e2900cf0a09f73dca91225f1594928d7dbcfcfa22bbcc4990ffcddf98ea5';
 const EXPLORER_URL = 'https://preprod.midnightexplorer.com/contracts/5741';
 
-/* ─── animation helpers ─── */
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
   visible: (i: number) => ({
@@ -21,7 +20,6 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-/* ─── SVG icons (no emojis) ─── */
 function ShieldIcon({ className = 'w-7 h-7' }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -86,7 +84,6 @@ function ZapIcon({ className = 'w-5 h-5' }: { className?: string }) {
   );
 }
 
-/* ─── Landing Page ─── */
 export default function LandingPage() {
   const { setWalletConnected, setContractDeployed, setIsOnChain, setError, runDemoSetup } = useStore();
   const [connecting, setConnecting] = useState(false);
@@ -116,7 +113,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ─── NAV ─── */}
       <header className="border-b border-gray-200/60 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -151,9 +147,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* ─── HERO ─── */}
       <section className="relative overflow-hidden">
-        {/* Subtle gradient orbs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-brand-100/40 via-transparent to-transparent pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(224,231,255,0.5) 0%, transparent 70%)' }} />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-24 pb-12 sm:pb-20">
@@ -211,7 +205,6 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
 
-          {/* 3-step flow visual */}
           <motion.div
             initial="hidden"
             animate="visible"
@@ -248,7 +241,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── PROBLEM ─── */}
       <section className="py-12 sm:py-24 bg-white border-y border-gray-200/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
@@ -306,7 +298,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── HOW IT WORKS ─── */}
       <section className="py-12 sm:py-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
@@ -377,7 +368,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── BUILT ON MIDNIGHT ─── */}
       <section className="py-12 sm:py-24 bg-white border-y border-gray-200/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
@@ -432,7 +422,6 @@ export default function LandingPage() {
             ))}
           </motion.div>
 
-          {/* Contract address */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -458,7 +447,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── TECH STACK ─── */}
       <section className="py-10 sm:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
@@ -493,7 +481,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
       <section className="py-12 sm:py-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <motion.div
@@ -503,7 +490,6 @@ export default function LandingPage() {
             variants={stagger}
             className="relative bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl sm:rounded-3xl p-8 sm:p-12 lg:p-16 text-center overflow-hidden"
           >
-            {/* Decorative circles */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/4" />
 
@@ -535,7 +521,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
       <footer className="border-t border-gray-200/60 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">

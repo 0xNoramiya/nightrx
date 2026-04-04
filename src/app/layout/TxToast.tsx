@@ -9,7 +9,6 @@ export interface TxNotification {
   txHash?: string;
 }
 
-// Global notification state
 let listeners: Array<(n: TxNotification) => void> = [];
 
 export function notifyTx(notification: Omit<TxNotification, 'id'>) {
@@ -22,7 +21,6 @@ export default function TxToast() {
 
   const addNotification = useCallback((n: TxNotification) => {
     setNotifications((prev) => [...prev, n]);
-    // Auto-remove after 8s
     setTimeout(() => {
       setNotifications((prev) => prev.filter((item) => item.id !== n.id));
     }, 8000);
@@ -59,7 +57,6 @@ export default function TxToast() {
             onClick={() => dismiss(n.id)}
           >
             <div className="flex items-start gap-3">
-              {/* Icon */}
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                   n.type === 'success'
@@ -88,7 +85,6 @@ export default function TxToast() {
                 )}
               </div>
 
-              {/* Content */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900">{n.title}</p>
                 {n.txHash && (
@@ -127,7 +123,6 @@ export default function TxToast() {
                 )}
               </div>
 
-              {/* Dismiss */}
               <button
                 onClick={() => dismiss(n.id)}
                 className="text-gray-300 hover:text-gray-500 flex-shrink-0"

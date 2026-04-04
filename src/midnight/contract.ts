@@ -1,24 +1,20 @@
 import * as compactRuntime from '@midnight-ntwrk/compact-runtime';
 import type { Credential, ProofData } from './types';
 
-// Descriptor for Vector<3, Bytes<32>> — matches the contract's hash input type
+// Domain separator prefixes padded to 32 bytes, matching the contract's pad(32, "...")
 const bytes32Descriptor = new compactRuntime.CompactTypeBytes(32);
 const vector3Descriptor = new compactRuntime.CompactTypeVector(3, bytes32Descriptor);
 
-// Domain separator prefixes (padded to 32 bytes, matching the contract's pad(32, "..."))
 const CRED_PREFIX = new Uint8Array(32);
 const NULL_PREFIX = new Uint8Array(32);
 const ISSUER_PREFIX = new Uint8Array(32);
 
-// Encode "nightrx:cred:" into bytes
 const credBytes = new TextEncoder().encode('nightrx:cred:');
 CRED_PREFIX.set(credBytes);
 
-// Encode "nightrx:null:" into bytes
 const nullBytes = new TextEncoder().encode('nightrx:null:');
 NULL_PREFIX.set(nullBytes);
 
-// Encode "nightrx:issuer:" into bytes
 const issuerBytes = new TextEncoder().encode('nightrx:issuer:');
 ISSUER_PREFIX.set(issuerBytes);
 
@@ -90,5 +86,4 @@ export function buildProofData(credential: Credential): ProofData {
   };
 }
 
-// Utility exports for components that need byte conversion
 export { hexToBytes, bytesToHex, stringToBytes32 };

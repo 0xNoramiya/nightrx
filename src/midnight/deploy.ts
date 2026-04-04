@@ -1,11 +1,3 @@
-/**
- * NightRx Contract Deployment Script
- *
- * Usage:
- *   npx tsx src/midnight/deploy.ts            # local network
- *   npx tsx src/midnight/deploy.ts preprod     # preprod testnet
- */
-
 import { CompiledContract } from '@midnight-ntwrk/compact-js';
 import { deployContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { setNetworkId, getNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
@@ -42,7 +34,6 @@ const CONFIGS = {
     indexerWS: 'ws://127.0.0.1:8088/api/v3/graphql/ws',
     node: 'http://127.0.0.1:9944',
     proofServer: 'http://127.0.0.1:6300',
-    // Genesis master wallet seed (from midnight-local-dev)
     seed: '0000000000000000000000000000000000000000000000000000000000000001',
   },
   preprod: {
@@ -122,7 +113,6 @@ async function main() {
 
   setNetworkId(config.networkId);
 
-  // Load compiled contract
   const zkConfigPath = path.resolve(__dirname, '..', '..', 'contracts', 'managed', 'nightrx');
   const contractPath = path.resolve(zkConfigPath, 'contract', 'index.js');
   if (!fs.existsSync(contractPath)) {
@@ -132,17 +122,11 @@ async function main() {
 
   const contractModule = await import(contractPath);
 
-  // Witness implementations for deployment
-  // These provide private data to the ZK circuits
   const witnesses = {
     issuerSecret: (context: any): [any, Uint8Array] => {
-      // Return current private state + a dummy 32-byte secret
-      // Real issuer secret will be provided when calling issueCredential
       return [context.privateState, new Uint8Array(32)];
     },
     credentialData: (context: any): [any, [Uint8Array, Uint8Array]] => {
-      // Return current private state + dummy credential data
-      // Real credential data will be provided when calling verifyPickup
       return [context.privateState, [new Uint8Array(32), new Uint8Array(32)]];
     },
   };
@@ -155,7 +139,6 @@ async function main() {
     );
   console.log('Contract loaded.');
 
-  // Derive keys from seed
   const keys = deriveKeys(config.seed);
   const shieldedSecretKeys = ledger.ZswapSecretKeys.fromSeed(keys[Roles.Zswap]);
   const dustSecretKey = ledger.DustSecretKey.fromSeed(keys[Roles.Dust]);
@@ -164,7 +147,6 @@ async function main() {
     getNetworkId(),
   );
 
-  // Build wallet
   const walletConfig = {
     networkId: getNetworkId(),
     indexerClientConnection: {
@@ -198,7 +180,6 @@ async function main() {
   await wallet.start(shieldedSecretKeys, dustSecretKey);
   console.log('Wallet started. Syncing...');
 
-  // Wait for sync
   await Rx.firstValueFrom(
     wallet
       .state()
@@ -213,7 +194,6 @@ async function main() {
     state.unshielded.balances[ledger.unshieldedToken().raw] ?? 0n;
   console.log(`NIGHT balance: ${nightBalance.toLocaleString()}`);
 
-  // Register for DUST if needed
   const dustBalance = state.dust.balance
     ? state.dust.balance(new Date())
     : state.dust.walletBalance
@@ -262,7 +242,6 @@ async function main() {
     }
   }
 
-  // Build providers
   const syncedState: any = await Rx.firstValueFrom(
     wallet.state().pipe(Rx.filter((s: any) => s.isSynced)),
   );

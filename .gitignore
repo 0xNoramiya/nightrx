@@ -7,3 +7,7 @@ demo-video/
 docs/
 *:Zone.Identifier
 *.pptx
+.vercel
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
