@@ -1,8 +1,0 @@
-1
-00:00:00,050 --> 00:00:05,644
-Every transaction is real and verifiable on the Midnight preprod explorer.
-
-2
-00:00:05,644 --> 00:00:13,592
-You can see the contract interactions — but thanks to zero-knowledge proofs, the medical data is never exposed on-chain.
-

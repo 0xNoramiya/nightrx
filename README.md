@@ -11,6 +11,9 @@ Privacy-preserving healthcare credential system built on [Midnight](https://midn
 | **Contract Address** | `05d3e2900cf0a09f73dca91225f1594928d7dbcfcfa22bbcc4990ffcddf98ea5` |
 | **Network** | Midnight Preprod |
 | **Explorer** | [View on Midnight Explorer](https://preprod.midnightexplorer.com/contracts/5741) |
+| **Live App** | [173.212.235.82](http://173.212.235.82) |
+| **Pitch Deck** | [Google Slides](https://docs.google.com/presentation/d/1qE2iZa7Uf1LMmCD9f0Ur-3gvlXqjfaGq/edit?usp=drive_link&ouid=112610668065771207633&rtpof=true&sd=true) |
+| **Demo Video** | [Google Drive](https://drive.google.com/file/d/1asrELz5EzvcuFw2vRV_nm2tlZOw1qzrd/view?usp=drive_link) |
 
 ---
 

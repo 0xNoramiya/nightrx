@@ -3,3 +3,7 @@ dist/
 deployment.json
 .env
 midnight-level-db/
+demo-video/
+docs/
+*:Zone.Identifier
+*.pptx
