@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "compile": "compact compile contracts/nightrx/contract.compact contracts/managed/nightrx",
     "start-proof-server": "docker run -p 6300:6300 midnightntwrk/proof-server:8.0.3",
